@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Threading;
 
 namespace GameOfLife
@@ -9,6 +10,8 @@ namespace GameOfLife
         public Boolean paused = false;
         private int iteration, surroundingCellsResult = 0;
         private int[,] plateau = new int[19, 19];
+        private Stack delCoord = new Stack();
+        private Stack addCoord = new Stack();
 
         public Game()
         {
@@ -52,9 +55,9 @@ namespace GameOfLife
 
         public int getCellState(int x, int y)
         {
-            if (x < 19 && x > 0 && y < 19 && y > 0)
+            if (x < 19 && x > 0 && y < 19 && y > 0 && plateau[y, x] == 1)
             {
-                return plateau[y, x];
+                return 1;
             }
             else
             {
@@ -62,19 +65,36 @@ namespace GameOfLife
             }
         }
 
-        public void deleteCell(int x, int y)
+        public void setCellOff(int x, int y)
         {
             plateau[y, x] = 0;
         }
 
-        public void addCell(int x, int y)
+        public void setCellOn(int x, int y)
         {
-            plateau[y, x] = 1;
+            if (plateau[y, x] == 0)
+            {
+                plateau[y, x] = 2; // on depuis 1 itération
+            }
+            else
+            {
+                plateau[y, x] = 1; // on
+            }
         }
 
         public void applyRules()
         {
-            System.Diagnostics.Debug.WriteLine("applyRules()");
+            for (int i = 0; i != 19; i++)
+            {
+                for (int j = 0; j != 19; j++)
+                {
+                    if (plateau[i, j] == 2)
+                    {
+                        setCellOn(j, i);
+                    }
+                }
+            }
+
             for (int i = 0; i != 19; i++)
             {
                 for (int j = 0; j != 19; j++)
@@ -87,19 +107,39 @@ namespace GameOfLife
                         { //Si une cellule a exactement trois voisines vivantes, elle est vivante à l’étape suivante.
                             if (surroundingCellsResult == 3)
                             {
-                                addCell(i, j);
+                                int[] coords = new int[2];
+                                coords[0] = i;
+                                coords[1] = j;
+                                addCoord.Push(coords);
                             }
                         }
                         else
                         { //Si une cellule a strictement moins de deux ou strictement plus de trois voisines vivantes, elle est morte à l’étape suivante.
                             if (surroundingCellsResult < 2 || surroundingCellsResult > 3)
                             {
-                                deleteCell(i, j);
+                                int[] coords = new int[2];
+                                coords[0] = i;
+                                coords[1] = j;
+                                delCoord.Push(coords);
                             }
                         }
                     }
                 }
             }
+
+            //J'ajoute/delete par la suite certains éléments
+            while (addCoord.Count > 0)
+            {
+                var coords = (int[])addCoord.Pop();
+                setCellOn(coords[0], coords[1]);
+            }
+
+            while (delCoord.Count > 0)
+            {
+                var coords = (int[])delCoord.Pop();
+                setCellOff(coords[0], coords[1]);
+            }
+
             iteration++;
         }
 
@@ -115,10 +155,14 @@ namespace GameOfLife
                     { //Affiche le curseur de l'utilisateur
                         Console.BackgroundColor = ConsoleColor.White;
                     }
-                    
+
                     if (plateau[i, j] == 1)
                     { //Vivante
                         Console.ForegroundColor = ConsoleColor.Red;
+                    }
+                    else if (plateau[i, j] == 2)
+                    { //Vivante depuis peu
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                     }
                     else
                     { //Morte

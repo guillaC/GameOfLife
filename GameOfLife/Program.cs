@@ -29,7 +29,7 @@ namespace GameOfLife
                         break;
 
                     case ConsoleKey.Spacebar:
-                        game.addCell(game.cursor.posX, game.cursor.posY);
+                        game.setCellOn(game.cursor.posX, game.cursor.posY);
                         break;
 
                     case ConsoleKey.Enter:
