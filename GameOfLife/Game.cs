@@ -11,10 +11,10 @@
         private const int Width = 69;
         private const int Height = 19;
 
-        private bool paused = true;
+        public bool Paused { get; set; }
 
         private int iteration, surroundingCellsResult = 0;
-        private int[,] plateau = new int[Height, Width];
+        private CellState[,] plateau = new CellState[Height, Width];
 
         private Stack delCoord = new Stack();
         private Stack addCoord = new Stack();
@@ -36,7 +36,7 @@
             {
                 while (true)
                 {
-                    if (paused == false)
+                    if (Paused == false)
                     {
                         ApplyRules();
                     }
@@ -55,21 +55,9 @@
             AliveSinceLastIteration
         }
 
-        public void Pause()
-        {
-            if (this.paused == false)
-            {
-                this.paused = true;
-            }
-            else
-            {
-                this.paused = false;
-            }
-        }
-
         public int GetCellState(int x, int y)
         {
-            if (x < Width && x >= 0 && y < Height && y >= 0 && this.plateau[y, x] == (int)CellState.Alive)
+            if (x < Width && x >= 0 && y < Height && y >= 0 && this.plateau[y, x] == CellState.Alive)
             {
                 return (int)CellState.Alive;
             }
@@ -86,13 +74,13 @@
 
         public void SetCellOn(int x, int y)
         {
-            if (this.plateau[y, x] == (int)CellState.Dead)
+            if (this.plateau[y, x] == CellState.Dead)
             {
-                this.plateau[y, x] = (int)CellState.AliveSinceLastIteration;
+                this.plateau[y, x] = CellState.AliveSinceLastIteration;
             }
             else
             {
-                this.plateau[y, x] = (int)CellState.Alive;
+                this.plateau[y, x] = CellState.Alive;
             }
         }
 
@@ -102,7 +90,7 @@
             {
                 for (int j = 0; j != Width; j++)
                 {
-                    if (this.plateau[i, j] == (int)CellState.AliveSinceLastIteration)
+                    if (this.plateau[i, j] == CellState.AliveSinceLastIteration)
                     {
                         this.SetCellOn(j, i);
                     }
@@ -170,11 +158,11 @@
                         Console.BackgroundColor = ConsoleColor.White;
                     }
 
-                    if (this.plateau[i, j] == (int)CellState.Alive)
+                    if (this.plateau[i, j] == CellState.Alive)
                     { // Vivante
                         Console.ForegroundColor = ConsoleColor.Red;
                     }
-                    else if (this.plateau[i, j] == (int)CellState.AliveSinceLastIteration)
+                    else if (this.plateau[i, j] == CellState.AliveSinceLastIteration)
                     { // Vivante depuis peu
                         Console.ForegroundColor = ConsoleColor.DarkRed;
                     }
@@ -191,7 +179,7 @@
             Console.WriteLine();
             Console.WriteLine();
             Console.Write("X:" + this.UserCursor.posX + "; Y:" + this.UserCursor.posY + "; itération: " + this.iteration + " ");
-            if (this.paused)
+            if (this.Paused)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write("[PAUSE] ");
