@@ -7,9 +7,13 @@ namespace GameOfLife
     internal class Game
     {
         public Cursor cursor;
-        public Boolean paused = false;
+        private Boolean paused = true;
+
         private int iteration, surroundingCellsResult = 0;
-        private int[,] plateau = new int[19, 19];
+        private const int width = 69;
+        private const int height = 19;
+        private int[,] plateau = new int[height, width];
+
         private Stack delCoord = new Stack();
         private Stack addCoord = new Stack();
 
@@ -55,7 +59,7 @@ namespace GameOfLife
 
         public int getCellState(int x, int y)
         {
-            if (x < 19 && x > 0 && y < 19 && y > 0 && plateau[y, x] == 1)
+            if (x < width && x >= 0 && y < height && y >= 0 && plateau[y, x] == 1)
             {
                 return 1;
             }
@@ -84,9 +88,9 @@ namespace GameOfLife
 
         public void applyRules()
         {
-            for (int i = 0; i != 19; i++)
+            for (int i = 0; i != height; i++)
             {
-                for (int j = 0; j != 19; j++)
+                for (int j = 0; j != width; j++)
                 {
                     if (plateau[i, j] == 2)
                     {
@@ -95,9 +99,9 @@ namespace GameOfLife
                 }
             }
 
-            for (int i = 0; i != 19; i++)
+            for (int i = 0; i != width; i++)
             {
-                for (int j = 0; j != 19; j++)
+                for (int j = 0; j != height; j++)
                 {
                     surroundingCellsResult = getCellState(i, j - 1) + getCellState(i, j + 1) + getCellState(i + 1, j) + getCellState(i - 1, j) + getCellState(i - 1, j - 1) + getCellState(i + 1, j + 1) + getCellState(i - 1, j + 1) + getCellState(i + 1, j - 1);
                     //Si une cellule a exactement deux voisines vivantes, elle reste dans son état actuel à l’étape suivante.
@@ -145,11 +149,10 @@ namespace GameOfLife
 
         private void consolUpdate() //rendering
         {
-            System.Diagnostics.Debug.WriteLine("consolUpdate()");
-            for (int i = 0; i != 19; i++)
+            for (int i = 0; i != height; i++)
             {
                 Console.SetCursorPosition(0, i);
-                for (int j = 0; j != 19; j++)
+                for (int j = 0; j != width; j++)
                 {
                     if (cursor.posY == i && cursor.posX == j)
                     { //Affiche le curseur de l'utilisateur
@@ -162,11 +165,11 @@ namespace GameOfLife
                     }
                     else if (plateau[i, j] == 2)
                     { //Vivante depuis peu
-                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
                     }
                     else
                     { //Morte
-                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                        Console.ForegroundColor = ConsoleColor.Gray;
                     }
 
                     Console.Write("■");
