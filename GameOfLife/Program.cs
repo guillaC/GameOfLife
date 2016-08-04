@@ -13,27 +13,27 @@ namespace GameOfLife
                 switch (keyInfo.Key)
                 {
                     case ConsoleKey.UpArrow:
-                        game.cursor.setPos(game.cursor.posX, game.cursor.posY - 1);
+                        game.UserCursor.setPos(game.UserCursor.posX, game.UserCursor.posY - 1);
                         break;
 
                     case ConsoleKey.DownArrow:
-                        game.cursor.setPos(game.cursor.posX, game.cursor.posY + 1);
+                        game.UserCursor.setPos(game.UserCursor.posX, game.UserCursor.posY + 1);
                         break;
 
                     case ConsoleKey.LeftArrow:
-                        game.cursor.setPos(game.cursor.posX - 1, game.cursor.posY);
+                        game.UserCursor.setPos(game.UserCursor.posX - 1, game.UserCursor.posY);
                         break;
 
                     case ConsoleKey.RightArrow:
-                        game.cursor.setPos(game.cursor.posX + 1, game.cursor.posY);
+                        game.UserCursor.setPos(game.UserCursor.posX + 1, game.UserCursor.posY);
                         break;
 
                     case ConsoleKey.Spacebar:
-                        game.setCellOn(game.cursor.posX, game.cursor.posY);
+                        game.SetCellOn(game.UserCursor.posX, game.UserCursor.posY);
                         break;
 
                     case ConsoleKey.Enter:
-                        game.pause();
+                        game.Pause();
                         break;
                 }
             }
