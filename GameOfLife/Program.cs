@@ -33,7 +33,7 @@ namespace GameOfLife
                         break;
 
                     case ConsoleKey.Enter:
-                        game.Pause();
+                        game.Paused = !game.Paused;
                         break;
                 }
             }
