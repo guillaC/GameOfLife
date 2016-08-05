@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace GameOfLife
+﻿namespace GameOfLife
 {
+    using System;
+
     internal class Program
     {
         private static void Main(string[] args)
@@ -13,27 +13,31 @@ namespace GameOfLife
                 switch (keyInfo.Key)
                 {
                     case ConsoleKey.UpArrow:
-                        game.UserCursor.setPos(game.UserCursor.posX, game.UserCursor.posY - 1);
+                        game.UserCursor.SetPos(game.UserCursor.PosX, game.UserCursor.PosY - 1);
                         break;
 
                     case ConsoleKey.DownArrow:
-                        game.UserCursor.setPos(game.UserCursor.posX, game.UserCursor.posY + 1);
+                        game.UserCursor.SetPos(game.UserCursor.PosX, game.UserCursor.PosY + 1);
                         break;
 
                     case ConsoleKey.LeftArrow:
-                        game.UserCursor.setPos(game.UserCursor.posX - 1, game.UserCursor.posY);
+                        game.UserCursor.SetPos(game.UserCursor.PosX - 1, game.UserCursor.PosY);
                         break;
 
                     case ConsoleKey.RightArrow:
-                        game.UserCursor.setPos(game.UserCursor.posX + 1, game.UserCursor.posY);
+                        game.UserCursor.SetPos(game.UserCursor.PosX + 1, game.UserCursor.PosY);
                         break;
 
                     case ConsoleKey.Spacebar:
-                        game.SetCellOn(game.UserCursor.posX, game.UserCursor.posY);
+                        game.SetCellOn(game.UserCursor.PosX, game.UserCursor.PosY);
+                        break;
+
+                    case ConsoleKey.R:
+                        game.RandomCell();
                         break;
 
                     case ConsoleKey.Enter:
-                        game.Pause();
+                        game.Paused = !game.Paused;
                         break;
                 }
             }

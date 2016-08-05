@@ -2,19 +2,19 @@
 {
     internal class Cursor
     {
-        public int posX;
-        public int posY;
+        public int PosX;
+        public int PosY;
 
         public Cursor(int x, int y)
         {
-            this.posX = x;
-            this.posY = y;
+            this.PosX = x;
+            this.PosY = y;
         }
 
-        public void setPos(int x, int y)
+        public void SetPos(int x, int y)
         {
-            this.posX = x;
-            this.posY = y;
+            this.PosX = x;
+            this.PosY = y;
         }
     }
 }

@@ -8,16 +8,21 @@
     {
         public Cursor UserCursor;
 
+        public bool Paused { get; set; }
+
         private const int Width = 69;
         private const int Height = 19;
-
-        private bool paused = true;
-
-        private int iteration, surroundingCellsResult = 0;
-        private int[,] plateau = new int[Height, Width];
-
+        private int iteration, surroundingCellsResult, population = 0;
+        private CellState[,] world = new CellState[Height, Width];
         private Stack delCoord = new Stack();
         private Stack addCoord = new Stack();
+
+        private enum CellState
+        {
+            Dead,
+            Alive,
+            AliveSinceLastIteration
+        }
 
         public Game()
         {
@@ -27,6 +32,7 @@
             {
                 while (true)
                 {
+                    this.population = 0;
                     ConsoleUpdate();
                     Thread.Sleep(50);
                 }
@@ -36,7 +42,7 @@
             {
                 while (true)
                 {
-                    if (paused == false)
+                    if (Paused == false)
                     {
                         ApplyRules();
                     }
@@ -48,28 +54,9 @@
             threadRefresh.Start();
         }
 
-        private enum CellState
-        {
-            Dead,
-            Alive,
-            AliveSinceLastIteration
-        }
-
-        public void Pause()
-        {
-            if (this.paused == false)
-            {
-                this.paused = true;
-            }
-            else
-            {
-                this.paused = false;
-            }
-        }
-
         public int GetCellState(int x, int y)
         {
-            if (x < Width && x >= 0 && y < Height && y >= 0 && this.plateau[y, x] == (int)CellState.Alive)
+            if (x < Width && x >= 0 && y < Height && y >= 0 && this.world[y, x] == CellState.Alive)
             {
                 return (int)CellState.Alive;
             }
@@ -81,18 +68,33 @@
 
         public void SetCellOff(int x, int y)
         {
-            this.plateau[y, x] = (int)CellState.Dead;
+            this.world[y, x] = (int)CellState.Dead;
         }
 
         public void SetCellOn(int x, int y)
         {
-            if (this.plateau[y, x] == (int)CellState.Dead)
+            if (this.world[y, x] == CellState.Dead)
             {
-                this.plateau[y, x] = (int)CellState.AliveSinceLastIteration;
+                this.world[y, x] = CellState.AliveSinceLastIteration;
             }
             else
             {
-                this.plateau[y, x] = (int)CellState.Alive;
+                this.world[y, x] = CellState.Alive;
+            }
+        }
+
+        public void RandomCell()
+        {
+            Random r = new Random();
+            for (int i = 0; i != Height; i++)
+            {
+                for (int j = 0; j != Width; j++)
+                {
+                    if (r.Next(2) == 0)
+                    {
+                        this.SetCellOn(j, i);
+                    }
+                }
             }
         }
 
@@ -102,7 +104,7 @@
             {
                 for (int j = 0; j != Width; j++)
                 {
-                    if (this.plateau[i, j] == (int)CellState.AliveSinceLastIteration)
+                    if (this.world[i, j] == CellState.AliveSinceLastIteration)
                     {
                         this.SetCellOn(j, i);
                     }
@@ -114,12 +116,12 @@
                 for (int j = 0; j != Height; j++)
                 {
                     this.surroundingCellsResult = this.GetCellState(i, j - 1) + this.GetCellState(i, j + 1) + this.GetCellState(i + 1, j) + this.GetCellState(i - 1, j) + this.GetCellState(i - 1, j - 1) + this.GetCellState(i + 1, j + 1) + this.GetCellState(i - 1, j + 1) + this.GetCellState(i + 1, j - 1);
-                    //// Si une cellule a exactement deux voisines vivantes, elle reste dans son état actuel à l’étape suivante.
+                    // Any live cell with two or three live neighbours lives on to the next generation.
 
-                    if (this.surroundingCellsResult != 2)
+                    if (this.surroundingCellsResult != 2 || this.surroundingCellsResult != 3)
                     {
                         if (this.GetCellState(i, j) == (int)CellState.Dead)
-                        { // Si une cellule a exactement trois voisines vivantes, elle est vivante à l’étape suivante.
+                        { // Any dead cell with exactly three live neighbours becomes a live cell
                             if (this.surroundingCellsResult == 3)
                             {
                                 int[] coords = new int[2];
@@ -129,7 +131,7 @@
                             }
                         }
                         else
-                        { // Si une cellule a strictement moins de deux ou strictement plus de trois voisines vivantes, elle est morte à l’étape suivante.
+                        { // Any live cell with fewer than two live neighbours and any live cell with more than three live neighbours dies
                             if (this.surroundingCellsResult < 2 || this.surroundingCellsResult > 3)
                             {
                                 int[] coords = new int[2];
@@ -165,21 +167,26 @@
                 Console.SetCursorPosition(0, i);
                 for (int j = 0; j != Width; j++)
                 {
-                    if (this.UserCursor.posY == i && this.UserCursor.posX == j)
-                    { // Affiche le curseur de l'utilisateur
+                    if (this.UserCursor.PosY == i && this.UserCursor.PosX == j)
+                    { // Display the cursor
                         Console.BackgroundColor = ConsoleColor.White;
                     }
 
-                    if (this.plateau[i, j] == (int)CellState.Alive)
-                    { // Vivante
+                    if (this.world[i, j] == CellState.Alive || this.world[i, j] == CellState.AliveSinceLastIteration)
+                    { // Count the living cells
+                        this.population++;
+                    }
+
+                    if (this.world[i, j] == CellState.Alive)
+                    { // Alive
                         Console.ForegroundColor = ConsoleColor.Red;
                     }
-                    else if (this.plateau[i, j] == (int)CellState.AliveSinceLastIteration)
-                    { // Vivante depuis peu
+                    else if (this.world[i, j] == CellState.AliveSinceLastIteration)
+                    { // Alive since last iteration
                         Console.ForegroundColor = ConsoleColor.DarkRed;
                     }
                     else
-                    { // Morte
+                    { // Dead
                         Console.ForegroundColor = ConsoleColor.Gray;
                     }
 
@@ -190,8 +197,8 @@
 
             Console.WriteLine();
             Console.WriteLine();
-            Console.Write("X:" + this.UserCursor.posX + "; Y:" + this.UserCursor.posY + "; itération: " + this.iteration + " ");
-            if (this.paused)
+            Console.Write("X:" + this.UserCursor.PosX + "; Y:" + this.UserCursor.PosY + "; generation: " + this.iteration + " population: " + this.population);
+            if (this.Paused)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write("[PAUSE] ");
