@@ -12,17 +12,8 @@
 
         private const int Width = 69;
         private const int Height = 19;
-<<<<<<< HEAD
         private int iteration, surroundingCellsResult, population = 0;
         private CellState[,] world = new CellState[Height, Width];
-=======
-
-        public bool Paused { get; set; }
-
-        private int iteration, surroundingCellsResult = 0;
-        private CellState[,] plateau = new CellState[Height, Width];
-
->>>>>>> origin/master
         private Stack delCoord = new Stack();
         private Stack addCoord = new Stack();
 
@@ -63,22 +54,9 @@
             threadRefresh.Start();
         }
 
-<<<<<<< HEAD
         public int GetCellState(int x, int y)
         {
             if (x < Width && x >= 0 && y < Height && y >= 0 && this.world[y, x] == CellState.Alive)
-=======
-        private enum CellState
-        {
-            Dead,
-            Alive,
-            AliveSinceLastIteration
-        }
-
-        public int GetCellState(int x, int y)
-        {
-            if (x < Width && x >= 0 && y < Height && y >= 0 && this.plateau[y, x] == CellState.Alive)
->>>>>>> origin/master
             {
                 return (int)CellState.Alive;
             }
@@ -95,7 +73,6 @@
 
         public void SetCellOn(int x, int y)
         {
-<<<<<<< HEAD
             if (this.world[y, x] == CellState.Dead)
             {
                 this.world[y, x] = CellState.AliveSinceLastIteration;
@@ -118,15 +95,6 @@
                         this.SetCellOn(j, i);
                     }
                 }
-=======
-            if (this.plateau[y, x] == CellState.Dead)
-            {
-                this.plateau[y, x] = CellState.AliveSinceLastIteration;
-            }
-            else
-            {
-                this.plateau[y, x] = CellState.Alive;
->>>>>>> origin/master
             }
         }
 
@@ -136,11 +104,7 @@
             {
                 for (int j = 0; j != Width; j++)
                 {
-<<<<<<< HEAD
                     if (this.world[i, j] == CellState.AliveSinceLastIteration)
-=======
-                    if (this.plateau[i, j] == CellState.AliveSinceLastIteration)
->>>>>>> origin/master
                     {
                         this.SetCellOn(j, i);
                     }
@@ -208,7 +172,6 @@
                         Console.BackgroundColor = ConsoleColor.White;
                     }
 
-<<<<<<< HEAD
                     if (this.world[i, j] == CellState.Alive || this.world[i, j] == CellState.AliveSinceLastIteration)
                     { // Count the living cells
                         this.population++;
@@ -220,14 +183,6 @@
                     }
                     else if (this.world[i, j] == CellState.AliveSinceLastIteration)
                     { // Alive since last iteration
-=======
-                    if (this.plateau[i, j] == CellState.Alive)
-                    { // Vivante
-                        Console.ForegroundColor = ConsoleColor.Red;
-                    }
-                    else if (this.plateau[i, j] == CellState.AliveSinceLastIteration)
-                    { // Vivante depuis peu
->>>>>>> origin/master
                         Console.ForegroundColor = ConsoleColor.DarkRed;
                     }
                     else
@@ -242,11 +197,7 @@
 
             Console.WriteLine();
             Console.WriteLine();
-<<<<<<< HEAD
             Console.Write("X:" + this.UserCursor.PosX + "; Y:" + this.UserCursor.PosY + "; generation: " + this.iteration + " population: " + this.population);
-=======
-            Console.Write("X:" + this.UserCursor.posX + "; Y:" + this.UserCursor.posY + "; itération: " + this.iteration + " ");
->>>>>>> origin/master
             if (this.Paused)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
