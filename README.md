@@ -1,8 +1,7 @@
 # GameOfLife
 Conway's Game Of Life Simulator.
 
-![screen](http://i.giphy.com/3o6ZteJcElT560fyc8.gif)
->Gosper glider gun pattern: https://en.wikipedia.org/wiki/Gun_(cellular_automaton)
+![screen](https://i.imgur.com/rsiOFcb.png)
 
 ### About Game of Life
 * [Wikipedia article](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life)
